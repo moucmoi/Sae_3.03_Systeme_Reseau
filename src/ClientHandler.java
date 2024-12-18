@@ -1,73 +1,59 @@
 import java.io.*;
 import java.net.*;
 
-public class ClientHandler implements Runnable {
+public class ClientHandler extends Thread {
     private Socket socket;
-    private BufferedReader in;
     private PrintWriter out;
+    private BufferedReader in;
     private String playerName;
 
-    public ClientHandler(Socket socket) throws IOException {
+    public ClientHandler(Socket socket) {
         this.socket = socket;
-        this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        this.out = new PrintWriter(socket.getOutputStream(), true);
+        try {
+            out = new PrintWriter(socket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    @Override
     public void run() {
         try {
-            out.println("Please enter your name: ");
+            out.println("Please enter your name:");
             playerName = in.readLine();
-            Server.addClient(playerName, this);
             out.println("OK Connected as " + playerName);
+
+            Server.getClients().put(playerName, this);
 
             String command;
             while ((command = in.readLine()) != null) {
                 if (command.startsWith("challenge")) {
-                    String opponentName = command.split(" ")[1];
-                    ClientHandler opponent = Server.getClient(opponentName);
-
+                    String opponent = command.split(" ")[1];
+                    Server.handleChallenge(playerName, opponent);
+                } else if (command.equals("accept")) {
+                    String opponent = Server.getChallenges().get(playerName);
                     if (opponent != null) {
-                        opponent.getOut().println(playerName + " has challenged you! Type 'accept' to play.");
-                        String response = opponent.getIn().readLine();
-
-                        if ("accept".equalsIgnoreCase(response)) {
-                            out.println("OK Challenge accepted, starting game!");
-                            opponent.getOut().println("OK Challenge accepted, starting game!");
-
-                            // Start the game
-                            new Game(this, opponent).start();
-                        } else {
-                            out.println(opponentName + " declined the challenge.");
-                        }
+                        Server.startGame(playerName, opponent);
                     } else {
-                        out.println("ERR Player not found.");
+                        out.println("No challenge to accept.");
                     }
                 } else {
-                    out.println("Unknown command.");
+                    out.println("Invalid command.");
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            Server.removeClient(playerName);
             try {
                 socket.close();
+                Server.getClients().remove(playerName);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public PrintWriter getOut() {
-        return out;
-    }
-
-    public BufferedReader getIn() {
-        return in;
-    }
-
-    public String getPlayerName() {
-        return playerName;
+    public void sendMessage(String message) {
+        out.println(message);
     }
 }

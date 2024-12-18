@@ -1,30 +1,39 @@
 import java.io.*;
 import java.net.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
 
 public class Server {
-    private static ConcurrentHashMap<String, ClientHandler> clients = new ConcurrentHashMap<>();
+    private static Map<String, ClientHandler> clients = new HashMap<>();
+    private static Map<String, String> challenges = new HashMap<>();
 
-    public static void main(String[] args) throws IOException {
-        ServerSocket serverSocket = new ServerSocket(1234);
+    public static void main(String[] args) {
         System.out.println("Server started...");
-
-        while (true) {
-            Socket clientSocket = serverSocket.accept();
-            ClientHandler clientHandler = new ClientHandler(clientSocket);
-            new Thread(clientHandler).start();
+        try (ServerSocket serverSocket = new ServerSocket(12345)) {
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                new ClientHandler(clientSocket).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    public static void addClient(String name, ClientHandler clientHandler) {
-        clients.put(name, clientHandler);
+
+    public static void startGame(String player1, String player2) {
+        Game game = new Game(player1, player2);
+        game.start();
     }
 
-    public static ClientHandler getClient(String name) {
-        return clients.get(name);
+    public static Map<String, ClientHandler> getClients() {
+        return clients;
     }
 
-    public static void removeClient(String name) {
-        clients.remove(name);
+    public static Map<String, String> getChallenges() {
+        return challenges;
     }
+
+    public static void handleChallenge(String challenger, String opponent) {
+        challenges.put(opponent, challenger);
+    }
+
 }
