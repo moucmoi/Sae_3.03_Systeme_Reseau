@@ -7,7 +7,7 @@ public class Server {
     private static Map<String, String> challenges = new HashMap<>();
 
     public static void main(String[] args) {
-        System.out.println("Server started...");
+        System.out.println("Le Serveur est lancer ...");
         try (ServerSocket serverSocket = new ServerSocket(12345)) {
             while (true) {
                 Socket clientSocket = serverSocket.accept();

@@ -16,10 +16,10 @@ public class Client {
             String serverMessage;
             while ((serverMessage = in.readLine()) != null) {
                 System.out.println(serverMessage);
-                if (serverMessage.contains("Please enter your name:")) {
+                if (serverMessage.contains("Entrez votre nom:")) {
                     String name = userIn.readLine();
                     out.println(name);
-                } else if (serverMessage.contains("OK Connected as")) {
+                } else if (serverMessage.contains("OK Connecter en tant que :")) {
                     while (true) {
                         String command = userIn.readLine();
                         out.println(command);

@@ -19,9 +19,9 @@ public class ClientHandler extends Thread {
 
     public void run() {
         try {
-            out.println("Please enter your name:");
+            out.println("Entrez votre nom:");
             playerName = in.readLine();
-            out.println("OK Connected as " + playerName);
+            out.println("OK Connecter en tant que " + playerName);
 
             Server.getClients().put(playerName, this);
 
@@ -35,10 +35,10 @@ public class ClientHandler extends Thread {
                     if (opponent != null) {
                         Server.startGame(playerName, opponent);
                     } else {
-                        out.println("No challenge to accept.");
+                        out.println("Le challenge n'est pas accepter.");
                     }
                 } else {
-                    out.println("Invalid command.");
+                    out.println("Commande Invalide.");
                 }
             }
         } catch (IOException e) {
