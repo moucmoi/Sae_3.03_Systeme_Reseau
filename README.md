@@ -9,4 +9,4 @@ Pour lancer une Partie :
 5 - Mettre le nom des joueurs dans le 2ème et 3ème terminal
 6 - Dans le 2ème terminal lancer un defit a l'autre joueur (challenge [nom])
 7 - Accepter le défit dans le 3ème terminal (accept)
-8 - Jouer la partie dans le premier terminal
+8 - Jouer la partie depuis les terminals des clients
