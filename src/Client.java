@@ -2,28 +2,20 @@ import java.io.*;
 import java.net.*;
 
 public class Client {
-    private static final String SERVER_ADDRESS = "127.0.0.1";
-    private static final int SERVER_PORT = 12345;
-    private static PrintWriter out;
-    private static BufferedReader in;
-
     public static void main(String[] args) {
-        try (Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT)) {
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader userIn = new BufferedReader(new InputStreamReader(System.in));
+        try (Socket socket = new Socket("localhost", 12345);
+             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader console = new BufferedReader(new InputStreamReader(System.in))) {
+
+            System.out.println(input.readLine());
+            output.println(console.readLine());
 
             String serverMessage;
-            while ((serverMessage = in.readLine()) != null) {
+            while ((serverMessage = input.readLine()) != null) {
                 System.out.println(serverMessage);
-                if (serverMessage.contains("Entrez votre nom:")) {
-                    String name = userIn.readLine();
-                    out.println(name);
-                } else if (serverMessage.contains("OK Connecter en tant que :")) {
-                    while (true) {
-                        String command = userIn.readLine();
-                        out.println(command);
-                    }
+                if (serverMessage.contains("Choisissez une colonne")) {
+                    output.println(console.readLine());
                 }
             }
         } catch (IOException e) {

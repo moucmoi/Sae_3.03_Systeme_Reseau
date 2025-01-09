@@ -1,89 +1,82 @@
+import java.io.PrintWriter;
+
 public class Plateau {
     private static final int LIGNES = 6;
     private static final int COLONNES = 7;
     private static final char VIDE = '.';
-    private char[][] plateau;
+    private char[][] grille;
 
     public Plateau() {
-        plateau = new char[LIGNES][COLONNES];
-        initialiserPlateau();
+        this.grille = new char[LIGNES][COLONNES];
+        initialiser();
     }
 
-    // Initialise le plateau avec des cases vides
-    public void initialiserPlateau() {
+    public void initialiser() {
         for (int i = 0; i < LIGNES; i++) {
             for (int j = 0; j < COLONNES; j++) {
-                plateau[i][j] = VIDE;
+                grille[i][j] = VIDE;
             }
         }
     }
 
-    // Affiche le plateau
-    public void afficherPlateau() {
+    public void afficher(PrintWriter output) {
         for (int i = 0; i < LIGNES; i++) {
             for (int j = 0; j < COLONNES; j++) {
-                System.out.print(plateau[i][j] + " ");
+                output.print(grille[i][j] + " ");
             }
-            System.out.println();
+            output.println();
         }
-        System.out.println("1 2 3 4 5 6 7"); // Nombres des colonnes
+        output.println("1 2 3 4 5 6 7");
     }
 
-    // Vérifie si une colonne est pleine
-    public boolean estColonnePleine(int col) {
-        return plateau[0][col] != VIDE;
-    }
-
-    // Dépose un jeton dans une colonne et retourne la ligne où il est tombé
-    public int deposerJeton(int col, char symboleJoueur) {
-        for (int ligne = LIGNES - 1; ligne >= 0; ligne--) {
-            if (plateau[ligne][col] == VIDE) {
-                plateau[ligne][col] = symboleJoueur;
-                return ligne;
+    public boolean ajouterJeton(int colonne, char jeton) {
+        for (int i = LIGNES - 1; i >= 0; i--) {
+            if (grille[i][colonne] == VIDE) {
+                grille[i][colonne] = jeton;
+                return true;
             }
         }
-        return -1; // Retourne -1 si la colonne est pleine (mais cela ne devrait pas arriver)
+        return false;
     }
 
-    // Vérifie si le plateau est plein
+    public boolean verifierVictoire(int colonne, char jeton) {
+        for (int i = 0; i < LIGNES; i++) {
+            if (grille[i][colonne] == jeton && (
+                verifierDirection(i, colonne, jeton, 1, 0) ||
+                verifierDirection(i, colonne, jeton, 0, 1) ||
+                verifierDirection(i, colonne, jeton, 1, 1) ||
+                verifierDirection(i, colonne, jeton, 1, -1))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean verifierDirection(int ligne, int colonne, char jeton, int dLigne, int dColonne) {
+        int count = 1;
+        count += compterJetons(ligne, colonne, jeton, dLigne, dColonne);
+        count += compterJetons(ligne, colonne, jeton, -dLigne, -dColonne);
+        return count >= 4;
+    }
+
+    private int compterJetons(int ligne, int colonne, char jeton, int dLigne, int dColonne) {
+        int count = 0;
+        int l = ligne + dLigne;
+        int c = colonne + dColonne;
+        while (l >= 0 && l < LIGNES && c >= 0 && c < COLONNES && grille[l][c] == jeton) {
+            count++;
+            l += dLigne;
+            c += dColonne;
+        }
+        return count;
+    }
+
     public boolean estPlein() {
         for (int j = 0; j < COLONNES; j++) {
-            if (plateau[0][j] == VIDE) {
+            if (grille[0][j] == VIDE) {
                 return false;
             }
         }
         return true;
-    }
-
-    // Vérifie s'il y a une victoire dans la direction donnée (horizontale, verticale ou diagonale)
-    public boolean verifierVictoire(int ligne, int col, char symboleJoueur) {
-        return verifierDirection(ligne, col, symboleJoueur, 1, 0) || // Verticale
-               verifierDirection(ligne, col, symboleJoueur, 0, 1) || // Horizontale
-               verifierDirection(ligne, col, symboleJoueur, 1, 1) || // Diagonale /
-               verifierDirection(ligne, col, symboleJoueur, 1, -1);  // Diagonale \
-    }
-
-    private boolean verifierDirection(int ligne, int col, char symboleJoueur, int deltaLigne, int deltaCol) {
-        int compteur = 1;
-        compteur += compterJetons(ligne, col, symboleJoueur, deltaLigne, deltaCol);
-        compteur += compterJetons(ligne, col, symboleJoueur, -deltaLigne, -deltaCol);
-        return compteur >= 4;
-    }
-
-    private int compterJetons(int ligne, int col, char symboleJoueur, int deltaLigne, int deltaCol) {
-        int compteur = 0;
-        int l = ligne + deltaLigne;
-        int c = col + deltaCol;
-        while (l >= 0 && l < LIGNES && c >= 0 && c < COLONNES && plateau[l][c] == symboleJoueur) {
-            compteur++;
-            l += deltaLigne;
-            c += deltaCol;
-        }
-        return compteur;
-    }
-
-    // Getter pour le tableau du plateau
-    public char[][] getPlateau() {
-        return plateau;
     }
 }

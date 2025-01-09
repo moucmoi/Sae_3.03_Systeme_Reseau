@@ -3,57 +3,36 @@ import java.net.*;
 
 public class ClientHandler extends Thread {
     private Socket socket;
-    private PrintWriter out;
-    private BufferedReader in;
-    private String playerName;
+    private String nom;
+    private PrintWriter output;
+    private BufferedReader input;
 
-    public ClientHandler(Socket socket) {
+    public ClientHandler(Socket socket) throws IOException {
         this.socket = socket;
-        try {
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.output = new PrintWriter(socket.getOutputStream(), true);
     }
 
+    public String getNom() {
+        return nom;
+    }
+
+    public PrintWriter getOutput() {
+        return output;
+    }
+
+    public BufferedReader getInput() {
+        return input;
+    }
+
+    @Override
     public void run() {
         try {
-            out.println("Entrez votre nom:");
-            playerName = in.readLine();
-            out.println("OK Connecter en tant que " + playerName);
-
-            Server.getClients().put(playerName, this);
-
-            String command;
-            while ((command = in.readLine()) != null) {
-                if (command.startsWith("challenge")) {
-                    String opponent = command.split(" ")[1];
-                    Server.handleChallenge(playerName, opponent);
-                } else if (command.equals("accept")) {
-                    String opponent = Server.getChallenges().get(playerName);
-                    if (opponent != null) {
-                        Server.startGame(playerName, opponent);
-                    } else {
-                        out.println("Le challenge n'est pas accepter.");
-                    }
-                } else {
-                    out.println("Commande Invalide.");
-                }
-            }
+            output.println("Entrez votre nom :");
+            this.nom = input.readLine();
+            output.println("Bienvenue " + nom + " !");
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                socket.close();
-                Server.getClients().remove(playerName);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
-    }
-
-    public void sendMessage(String message) {
-        out.println(message);
     }
 }

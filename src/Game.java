@@ -1,60 +1,61 @@
+import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class Game {
     private String joueur1;
     private String joueur2;
-    private String joueurActuel;
     private Plateau plateau;
-
-    private static final char SYMBOLE_JOUEUR1 = 'X';
-    private static final char SYMBOLE_JOUEUR2 = 'O';
+    private boolean partieTerminee;
 
     public Game(String joueur1, String joueur2) {
         this.joueur1 = joueur1;
         this.joueur2 = joueur2;
-        this.joueurActuel = joueur1; // Le joueur1 commence par défaut
         this.plateau = new Plateau();
+        this.partieTerminee = false;
     }
 
-    public void start() {
-        System.out.println("Le jeu entre " + joueur1 + " et " + joueur2 + " a commencé !");
-        Scanner scanner = new Scanner(System.in);
+    public void start(Scanner input1, PrintWriter output1, Scanner input2, PrintWriter output2) {
+        plateau.initialiser();
+        char jetonCourant = 'X';
+        String joueurCourant = joueur1;
+        PrintWriter outputCourant;
+        Scanner inputCourant;
+        
+        while (!partieTerminee) {
+            outputCourant = joueurCourant.equals(joueur1) ? output1 : output2;
+            inputCourant = joueurCourant.equals(joueur1) ? input1 : input2;
 
-        boolean jeuTermine = false;
-        char symboleActuel = SYMBOLE_JOUEUR1;
+            plateau.afficher(outputCourant);
+            outputCourant.println("À vous de jouer (" + jetonCourant + "). Choisissez une colonne (1-7) :");
 
-        plateau.afficherPlateau();
-
-        while (!jeuTermine) {
-            System.out.println("C'est au tour de " + (joueurActuel.equals(joueur1) ? joueur1 : joueur2) + ".");
-            System.out.println("Choisissez une colonne (1-7) :");
-
-            int col;
-            while (true) {
-                col = scanner.nextInt() - 1; // Convertir en index 0-based
-                if (col < 0 || col >= 7 || plateau.estColonnePleine(col)) {
-                    System.out.println("Colonne invalide. Essayez à nouveau.");
-                } else {
-                    break;
-                }
+            int colonne;
+            try {
+                colonne = Integer.parseInt(inputCourant.nextLine()) - 1;
+            } catch (NumberFormatException e) {
+                outputCourant.println("Entrée invalide. Réessayez.");
+                continue;
             }
 
-            int ligne = plateau.deposerJeton(col, symboleActuel);
-            plateau.afficherPlateau();
-
-            if (plateau.verifierVictoire(ligne, col, symboleActuel)) {
-                System.out.println("Félicitations ! " + (joueurActuel.equals(joueur1) ? joueur1 : joueur2) + " a gagné !");
-                jeuTermine = true;
-            } else if (plateau.estPlein()) {
-                System.out.println("La partie est un match nul !");
-                jeuTermine = true;
-            } else {
-                // Changer de joueur
-                joueurActuel = joueurActuel.equals(joueur1) ? joueur2 : joueur1;
-                symboleActuel = (symboleActuel == SYMBOLE_JOUEUR1) ? SYMBOLE_JOUEUR2 : SYMBOLE_JOUEUR1;
+            if (colonne < 0 || colonne >= 7 || !plateau.ajouterJeton(colonne, jetonCourant)) {
+                outputCourant.println("Colonne invalide ou pleine. Réessayez.");
+                continue;
             }
+
+            if (plateau.verifierVictoire(colonne, jetonCourant)) {
+                partieTerminee = true;
+                outputCourant.println("Félicitations ! Vous avez gagné.");
+                break;
+            }
+
+            if (plateau.estPlein()) {
+                output1.println("Match nul !");
+                output2.println("Match nul !");
+                partieTerminee = true;
+                break;
+            }
+
+            joueurCourant = joueurCourant.equals(joueur1) ? joueur2 : joueur1;
+            jetonCourant = (jetonCourant == 'X') ? 'O' : 'X';
         }
-
-        scanner.close();
     }
 }
