@@ -4,7 +4,10 @@ public class ControleurStats {
     private final ConcurrentHashMap<String, StatsJoueur> StatsJoueur = new ConcurrentHashMap<>();
 
     public StatsJoueur getStats(String nomDuJoueur) {
-        return StatsJoueur.computeIfAbsent(nomDuJoueur, StatsJoueur::new);
+        if (!StatsJoueur.containsKey(nomDuJoueur)) {
+            StatsJoueur.put(nomDuJoueur, new StatsJoueur(nomDuJoueur));
+        }
+        return StatsJoueur.get(nomDuJoueur);
     }
 
     public void enregistrerVictoire(String nomDuJoueur) {

@@ -21,6 +21,7 @@ public class Serveur {
     }
 
     public static void main(String[] args) {
-        new Serveur().start(12345);
+        int port = Integer.parseInt(args[0]);
+        new Serveur().start(port);
     }
 }
