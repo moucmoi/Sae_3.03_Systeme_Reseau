@@ -2,27 +2,56 @@ import java.io.*;
 import java.net.*;
 
 public class Client {
-    public static void main(String[] args) {
-        String adresse = args[0]; 
-        String nomJoueur = args[1]; 
+    private final String servAddresse;
+    private final int servPort;
+    private PrintWriter sortie;
+    private BufferedReader entree;
 
-        try (Socket socket = new Socket(adresse, 555);
-             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader console = new BufferedReader(new InputStreamReader(System.in))) {
+    public Client(String servAddresse, int servPort) {
+        this.servAddresse = servAddresse;
+        this.servPort = servPort;
+    }
 
-            output.println(nomJoueur);  // Envoi du nom du joueur
+    public void start() {
+        try (Socket socket = new Socket(servAddresse, servPort)) {
+            sortie = new PrintWriter(socket.getOutputStream(), true);
+            entree = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            String serverMessage;
-            while ((serverMessage = input.readLine()) != null) {
-                System.out.println(serverMessage);
-                if (serverMessage.contains("defier")) {
-                    String command = console.readLine();
-                    output.println(command);  // Envoyer la commande pour défier un joueur
+            BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
+
+            // Thread pour lire les messages du serveur
+            Thread getMessageServ = new Thread(() -> {
+                try {
+                    String ligne;
+                    while ((ligne = entree.readLine()) != null) {
+                        System.out.println(ligne);
+                    }
+                } catch (IOException e) {
+                    System.err.println("Erreur de lecture des messages du serveur : " + e.getMessage());
                 }
+            });
+            getMessageServ.start();
+
+            // Lecture des entrées utilisateur
+            String commande;
+            while ((commande = console.readLine()) != null) {
+                // Ignorer les entrées vides
+                if (commande.trim().isEmpty()) {
+                    continue;
+                }
+
+                System.out.println(commande);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Erreur de connexion au serveur : " + e.getMessage());
         }
     }
+
+    // Usage : java -cp bin Client <adresse_serveur> <port>
+    public static void main(String[] args) {
+        String servAddresse = args[0];
+        int servPort = Integer.parseInt(args[1]);
+        new Client(servAddresse, servPort).start();
+    }
 }
+
