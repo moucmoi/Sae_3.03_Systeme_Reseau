@@ -36,7 +36,7 @@ public class GameSession {
                 grille[row][column] = playerName.equals(joueur1) ? 'X' : 'O';
                 if (verifierVictoire(playerName)) {
                     partieTerminee = true;
-                } else if (estDessiner()) {
+                } else if (estNul()) {
                     partieTerminee = true;
                 } else {
                     joueurActuel = joueurActuel.equals(joueur1) ? joueur2 : joueur1; // Changer de joueur
@@ -87,7 +87,7 @@ public class GameSession {
         return count == 4;
     }
 
-    public boolean estDessiner() {
+    public boolean estNul() {
         for (int col = 0; col < COLS; col++) {
             if (grille [0][col] == '-') {
                 return false; // Une colonne n'est pas pleine

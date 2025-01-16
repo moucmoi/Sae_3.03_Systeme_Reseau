@@ -161,7 +161,7 @@ public class ControleurClient implements Runnable {
             // Les joueurs retournent dans la liste des joueurs en attente
             serveur.joueursEnAttente.put(opposant.getNomJoueur(), opposant);
             serveur.joueursEnAttente.put(nomJoueur, this);
-        } else if (session.estDessiner()) {
+        } else if (session.estNul()) {
             envoyer("Match nul !");
             opposant.envoyer("Match nul !");
             serveur.gestionnaireStats.enregistrerEgalite(nomJoueur);
