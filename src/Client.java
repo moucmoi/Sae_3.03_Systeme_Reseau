@@ -19,7 +19,6 @@ public class Client {
 
             BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
 
-            // Thread pour lire les messages du serveur
             Thread getMessageServ = new Thread(() -> {
                 try {
                     String ligne;
@@ -32,15 +31,13 @@ public class Client {
             });
             getMessageServ.start();
 
-            // Lecture des entrées utilisateur
             String commande;
             while ((commande = console.readLine()) != null) {
-                // Ignorer les entrées vides
                 if (commande.trim().isEmpty()) {
                     continue;
                 }
 
-                System.out.println(commande);
+                sortie.println(commande);
             }
         } catch (IOException e) {
             System.err.println("Erreur de connexion au serveur : " + e.getMessage());
@@ -54,4 +51,3 @@ public class Client {
         new Client(servAddresse, servPort).start();
     }
 }
-
