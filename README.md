@@ -52,7 +52,7 @@ Avant de commencer, assurez-vous d'avoir installé les éléments suivants :
 | `connect [nom_utilisateur]` | Se connecter au serveur avec le nom d'utilisateur spécifié.                                     | `connect Alice`                  |
 | `list`                   | Afficher la liste des joueurs disponibles sur le serveur.                                        | `list`                           |
 | `ask [nom_du_joueur]`    | Inviter un joueur à jouer une partie.                                                            | `ask Bob`                        |
-| `accept`                 | Accepter une invitation à jouer. **Doit être saisie deux fois pour confirmation.**               | `accept`                         |
+| `accept`                 | Accepter une invitation à jouer. **Doit être saisie deux fois.**               | `accept`                         |
 | `play [numéro_de_colonne]` | Jouer un pion dans la colonne spécifiée lors de votre tour.                                      | `play 3`                         |
 | `historique`             | Afficher l'historique des parties jouées (actuellement non fonctionnel).                         | `historique`                     |
 | `deconnexion`            | Se déconnecter du serveur et quitter la partie en cours. *(Actuellement, cette commande présente des problèmes de fonctionnement.)* | `deconnexion`                    |
