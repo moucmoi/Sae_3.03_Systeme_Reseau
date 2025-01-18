@@ -2,7 +2,7 @@
 
 ## Description du projet
 
-Ce projet consiste en une application client-serveur permettant à des utilisateurs de se connecter à un serveur, de défier d'autres joueurs et de participer à des parties où l'objectif est d'aligner quatre pions pour gagner. Le projet inclut plusieurs fonctionnalités, comme la gestion des connexions clients, les interactions entre joueurs, et des commandes pour contrôler le déroulement des parties.
+Ce projet consiste en une application client-serveur permettant à des utilisateurs de se connecter à un serveur, de défier d'autres joueurs à un puissance 4. Le projet inclut plusieurs fonctionnalités, comme la gestion des connexions clients, les interactions entre joueurs, et des commandes pour contrôler le déroulement des parties.
 
 ## Prérequis
 
