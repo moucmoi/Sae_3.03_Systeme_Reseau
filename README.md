@@ -15,7 +15,7 @@ Avant de commencer, assurez-vous d'avoir installé les éléments suivants :
 
 1. **Cloner le dépôt Git** :
    ```bash
-   git clone https://github.com/moucmoi/Sae_3.03_Systeme_Reseau.git
+   git clone https://github.com/moucmoi/Sae_3.03_Systeme_Reseau
    ```
 
 2. **Accéder au répertoire du projet** :
@@ -79,7 +79,7 @@ La documentation Javadoc est incluse dans le projet pour faciliter la compréhen
 
 1. **Générer la Javadoc** :
    ```bash
-   javadoc -d doc src/*.java
+   javadoc -d ./docs ./src/*.java
    ```
 
 2. **Consulter la documentation** :
